@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+model User {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  email    String    @unique
+  firstName String
+  lastName  String
+  password String
+  dateOfBirth DateTime @default(now())
+  isVerified Boolean
+  createdAt DateTime @default(now())
+  deletedAt DateTime?
+  isDeleted Boolean @default(false)
+}
+
+enum EnumStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+
+model Task {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @map("userId") @db.ObjectId
+  title     String
+  content   String[]
+  startDate DateTime @default(now())
+  endDate   DateTime @default(now())
+  status    EnumStatus @default(PENDING)
+  priority  Priority @default(MEDIUM)
+  tags      String[] @default([])
+  isDeleted Boolean @default(false)
+  deletedAt DateTime?
+  createdAt DateTime @default(now())
+  categoryIds String[] @db.ObjectId
+}
+
+model Category {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  userId    String   @map("userId") @db.ObjectId
+  isDeleted Boolean @default(false)
+  deletedAt DateTime?
+  createdAt DateTime @default(now())
+}
